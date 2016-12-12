@@ -8,7 +8,7 @@ public class Main {
 		AnalyseurLexical anal = new AnalyseurLexical();
 		TableSymboles table = new TableSymboles ();
 		
-		String test = "5 == 8";
+		String test = "if(5>8){2+3}else{2+3}";
 		ArrayList<Token> tok = new ArrayList<Token>();
 		
 		Token a = anal.nextToken(test);
@@ -27,7 +27,7 @@ public class Main {
 		
 		AnalyseurSyntaxique analProfond = new AnalyseurSyntaxique (toks);
 		System.out.println("\n------------------------------------\n");
-		Arbre arbrisseau = analProfond.next_expression();
+		Arbre arbrisseau = analProfond.next_X();
 		System.out.println(arbrisseau);
 		
 		GenerationCode generation95 = new GenerationCode();

@@ -18,13 +18,24 @@ public class AnalyseurSyntaxique {
 	
 	public Arbre next_X () {
 		
-		return next_instruction();
+		Arbre retour = new Arbre();
+		retour.setToken(new Token("Main"));
+		
+		Arbre test = next_instruction();
+		while (test != null) {
+			
+			retour.addEnfants(test);
+			test = next_instruction();
+		}
+		
+		return retour;
+		
 	}
 	
 	public Arbre next_instruction () {
 		Arbre retour1 = new Arbre();
 		
-		switch (look().getClassname()) {
+		switch (look().getClassname()) { //look peut être null 
 		
 			case ("if"):
 				retour1.setToken(next());
@@ -33,37 +44,26 @@ public class AnalyseurSyntaxique {
 					retour1.addEnfants(next_expression());
 					if(look().getClassname().equals(")")) {
 						next();
-						if(look().getClassname().equals("{")) {
-							next();
-							retour1.addEnfants(next_instruction());
-							
-							if(look().getClassname().equals("}")) {
-								next();
-								if(look().getClassname().equals("else")) {
-									next();
-									if(look().getClassname().equals("{")) {
-										next();
-										retour1.addEnfants(next_instruction());
-										
-										if(look().getClassname().equals("}")) {
-											next();
-										}
-										
-										else
-											System.err.println("Error : syntax problem, '}' missing (else)");
-									}
-									
-									else
-										System.err.println("Error : syntax problem, '{' missing (else)");
-								}
+						retour1.addEnfants(next_instruction());
+						
+						if(look().getClassname().equals("else")) {
+							Token op = next();
+							Arbre retour2 = next_instruction();
+							if (retour2 == null ) {
+								System.err.println("retour2 null pour l'instruction (else)");
+								return null;
 							}
 							
-							else
-								System.err.println("Error : syntax problem, '}' missing (if)");
+							else {
+								Arbre [] at = {retour2};
+								retour2 = new Arbre(op, at);
+							}
+							
+							retour1.addEnfants(retour2);
 						}
 						
 						else
-							System.err.println("Error : syntax problem, '{' missing (if)");
+							return retour1;
 					}
 					
 					else
@@ -73,6 +73,73 @@ public class AnalyseurSyntaxique {
 				else
 					System.err.println("Error : syntax problem, '(' missing (if)");
 				return retour1;
+				
+			case ("for"):
+				retour1.setToken(next());
+				if (look().getClassname().equals("(")) {
+					next();
+					retour1.addEnfants(next_affectation());
+					if(look().getClassname().equals(";")) {
+						next();
+						retour1.addEnfants(next_expression());
+						if(look().getClassname().equals(";")) {
+							next();
+							retour1.addEnfants(next_affectation());
+							
+							if(look().getClassname().equals(")")) {
+								next();
+								retour1.addEnfants(next_instruction());
+							}
+							
+							else
+								System.err.println("Error : syntax problem, ')' missing (for)");
+						}
+						
+						else
+							System.err.println("Error : syntax problem, ';' missing (for)");
+					}
+					
+					else
+						System.err.println("Error : syntax problem, ';' missing (for)");
+				}
+				
+				else
+					System.err.println("Error : syntax problem, '(' missing (for)");
+				return retour1;
+			
+			case ("while"):
+				retour1.setToken(next());
+				if (look().getClassname().equals("(")) {
+					next();
+					retour1.addEnfants(next_expression());
+					if(look().getClassname().equals(")")) {
+						next();
+						retour1.addEnfants(next_instruction());
+					}
+					
+					else
+						System.err.println("Error : syntax problem, ')' missing (while)");
+				}
+				
+				else
+					System.err.println("Error : syntax problem, '(' missing (while)");
+				return retour1;
+				
+			case ("{"):
+				retour1.setToken(next());
+
+				Arbre nextInstruct = next_instruction();
+				while (nextInstruct != null) {
+
+					retour1.addEnfants(nextInstruct);
+					nextInstruct = next_instruction();
+				}
+				
+				return retour1;
+				
+			case ("}"):
+				next();
+				return null;
 			
 			default:
 				retour1 = next_expression();
@@ -146,6 +213,11 @@ public class AnalyseurSyntaxique {
 		if (a1 == null) {
 			return null;
 		}
+		
+		else if (pos >= tokens.length) {
+			return a1;
+		}
+		
 		else if(look().getClassname().equals("&&") || look().getClassname().equals("||") ){
 			Token op = next();
 			Arbre a2 = next_addition();
@@ -170,6 +242,11 @@ public class AnalyseurSyntaxique {
 		if (a1 == null) {
 			return null;
 		}
+		
+		else if (pos >= tokens.length) {
+			return a1;
+		}
+		
 		else if(look().getClassname().equals("==") || look().getClassname().equals("!=") || look().getClassname().equals("<")
 				|| look().getClassname().equals(">") || look().getClassname().equals("<=") || look().getClassname().equals(">=")){
 			Token op = next();

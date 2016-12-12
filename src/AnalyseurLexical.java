@@ -39,29 +39,29 @@ public class AnalyseurLexical {
 			}
 			
 			if (isAlphaNumeric(test.charAt(pos))) {
-				String tokClass = "" + test.charAt(pos);
+				String tokClass = "";
 				
-				pos++;
-				if (pos+1 < test.length()) {
-					while (isAlphaNumeric(test.charAt(pos)) && test.charAt(pos) != ' ') {
-						tokClass = tokClass.concat("" + test.charAt(pos));
-						pos++;
-					}
+				//pos++;
+				while (pos < test.length() && isAlphaNumeric(test.charAt(pos)) && test.charAt(pos) != ' ') {
+					tokClass = tokClass.concat("" + test.charAt(pos));
+					pos++;
 				}
 				
-				if (isNumeric(tokClass)){
-	
-					return new Token("cst_int", tokClass);
-				}	
-				
-				for (int i = 0; i < keyWords.length; i++) {
+				if (!tokClass.equalsIgnoreCase("")) {
+					if (isNumeric(tokClass)){
+		
+						return new Token("cst_int", tokClass);
+					}	
 					
-					if (tokClass.equalsIgnoreCase(keyWords[i])) {
-						return new Token(keyWords[i], "");
+					for (int i = 0; i < keyWords.length; i++) {
+						
+						if (tokClass.equalsIgnoreCase(keyWords[i])) {
+							return new Token(keyWords[i], "");
+						}
 					}
+					
+					return new Token("identifier", tokClass);
 				}
-				
-				return new Token("identifier", tokClass);
 			}
 			
 			else {
