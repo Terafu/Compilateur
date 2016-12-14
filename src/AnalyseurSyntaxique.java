@@ -35,6 +35,10 @@ public class AnalyseurSyntaxique {
 	public Arbre next_instruction () {
 		Arbre retour1 = new Arbre();
 		
+		if (look() == null) {
+			return null;
+		}
+		
 		switch (look().getClassname()) { //look peut être null 
 		
 			case ("if"):
@@ -46,7 +50,7 @@ public class AnalyseurSyntaxique {
 						next();
 						retour1.addEnfants(next_instruction());
 						
-						if(look().getClassname().equals("else")) {
+						if(look() != null && look().getClassname().equals("else")) {
 							Token op = next();
 							Arbre retour2 = next_instruction();
 							if (retour2 == null ) {
@@ -161,6 +165,42 @@ public class AnalyseurSyntaxique {
 				
 				return retour1;
 		}
+	}
+	
+	public Arbre next_declaration() {		
+
+		Arbre a1 = null;
+		
+		switch (look().getClassname()) {
+		
+			case "int":
+				
+			case "var":
+		}
+		
+		if(look().getClassname().equals("identifier")){
+			
+			Arbre id = new Arbre(next(),null);
+			
+			if(look().getClassname().equals("=")){
+				
+				Token op = next();
+				Arbre a2 = next_addition();
+				if (a2 == null ) {
+					System.err.println("Expression missing for affectation");
+					return null;
+				}
+				else {
+					Arbre [] at = {id, a2};
+					
+					return new Arbre(op, at);
+				}
+			}
+			else
+				System.err.println("Problem '=' missing for affectation");
+		}
+		
+		return a1;
 	}
 	
 	public Arbre next_affectation(){

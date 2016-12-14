@@ -8,7 +8,7 @@ public class Main {
 		AnalyseurLexical anal = new AnalyseurLexical();
 		TableSymboles table = new TableSymboles ();
 		
-		String test = "if(5>8){2+3}else{2+3}";
+		String test = "int toto = 3";
 		ArrayList<Token> tok = new ArrayList<Token>();
 		
 		Token a = anal.nextToken(test);
