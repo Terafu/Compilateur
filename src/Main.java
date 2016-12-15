@@ -8,7 +8,7 @@ public class Main {
 		AnalyseurLexical anal = new AnalyseurLexical();
 		TableSymboles table = new TableSymboles ();
 		
-		String test = "for(int toto=1;2<3;toto = 2){2+2}";
+		String test = "for(int i=1; i < 5; i = i + 1){i = i + 1}";
 		ArrayList<Token> tok = new ArrayList<Token>();
 		
 		Token a = anal.nextToken(test);
@@ -28,11 +28,8 @@ public class Main {
 		AnalyseurSyntaxique analProfond = new AnalyseurSyntaxique (toks);
 		System.out.println("\n------------------------------------\n");
 		Arbre arbrisseau = analProfond.next_X();
-		System.out.println(arbrisseau);
-		
-		GenerationCode generation95 = new GenerationCode();
+		System.out.println(arbrisseau);		
 		System.out.println("\n------------------------------------\n");
-		generation95.genererCode(arbrisseau);
 		
 		
 		/*Token var1 = new Token("identifier", "a");

@@ -33,7 +33,7 @@ public class TableSymboles {
 				System.out.println("Ajout d'un nouvel identifiant : " + _identifier.getName() + " a la position : " + nb_var);
 				symboleStack.peek().put(_identifier.getName(), "" + nb_var);
 				nb_var++;				
-				return nb_var;
+				return nb_var-1;
 			}
 		}
 		
@@ -55,10 +55,17 @@ public class TableSymboles {
 			if (x != null) {
 				return Integer.parseInt(x);
 			}
+			
+			i--;
 		}
 		
 		System.err.println("Error : the variable " + _identifier.getName() + " is not declared...");
 		return -1;
+	}
+	
+	public Hashtable<String, String> getStack (int level) {
+		
+		return symboleStack.get(level);
 	}
 	
 	public String toString () {

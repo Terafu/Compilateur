@@ -1,14 +1,20 @@
 .start
+push.i 0
 push.i 1
-set 1
+set 0
 .for0
-push.i 2
-push.i 3
+get 0
+push.i 5
 cmplt.i
 jumpf fin_for0
-set 0
-push.i 2
-push.i 2
+get 0
+push.i 1
 add.i
+set 0
+get 0
+push.i 1
+add.i
+set 0
+jump for0
 .fin_for0
 halt

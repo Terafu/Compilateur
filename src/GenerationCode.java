@@ -6,17 +6,21 @@ import java.util.ArrayList;
 public class GenerationCode {
 
 	private int label_counter = 0;
+	private TableSymboles symboles;
+	int niveau_bloc = 0;
 	
 	public GenerationCode(){
 	}
 	
-	public void genererCode(Arbre a){
+	public void genererCode(Arbre a, TableSymboles _symboles){
+		
+		symboles = _symboles;
 		
 		try (PrintWriter out = new PrintWriter( "test.txt" )){
 			
 			out.println(".start");			
 
-			out.print(interpretBlock(a));
+			out.print(interpretBlock(a, niveau_bloc));
 			
 			out.println("halt");
 		}
@@ -32,9 +36,13 @@ public class GenerationCode {
 		}
 	}
 	
-	public String interpretBlock(Arbre a) {
+	public String interpretBlock(Arbre a, int niveau) {		
 		
 		String code = "";
+		
+		for(int i = 0; i < symboles.getStack(niveau).size(); i ++) {
+			code += "push.i 0\n";
+		}
 		
 		for (int i = 0; i < a.getEnfants().length; i ++) {	
 			
@@ -52,6 +60,9 @@ public class GenerationCode {
 		
 			case ("cst_int"):
 				code += "push.i " + a.getToken().getName() + "\n";
+				break;
+			case ("identifier"):
+				code += "get " + a.getToken().getName() + "\n";
 				break;
 			case ("+"):				
 				code += interpretToken(a.getEnfants()[0]);
@@ -102,10 +113,12 @@ public class GenerationCode {
 				int if_counter = label_counter++;
 				code += interpretToken(a.getEnfants()[0]);
 				code += "jumpf else" + if_counter + "\n";
-				code += interpretBlock(a.getEnfants()[1]);
+				niveau_bloc++;
+				code += interpretBlock(a.getEnfants()[1], niveau_bloc);
 				if (a.getEnfants().length > 2) {
 					code += "jump fin_else" + if_counter + "\n";
-					code += ".else" + if_counter + "\n" + interpretBlock(a.getEnfants()[2].getEnfants()[0]);
+					niveau_bloc++;
+					code += ".else" + if_counter + "\n" + interpretBlock(a.getEnfants()[2].getEnfants()[0], niveau_bloc);
 					code += ".fin_else" + if_counter + "\n";
 				}
 				
@@ -118,7 +131,8 @@ public class GenerationCode {
 				int while_counter = label_counter++;
 				code += ".while" + while_counter + "\n" + interpretToken(a.getEnfants()[0]);
 				code += "jumpf fin_while" + while_counter + "\n";
-				code += interpretBlock(a.getEnfants()[1]);
+				niveau_bloc++;
+				code += interpretBlock(a.getEnfants()[1], niveau_bloc);
 				code += "jump while" + while_counter + "\n";
 				code += ".fin_while" + while_counter + " ";
 				break;
@@ -128,17 +142,13 @@ public class GenerationCode {
 				code += ".for" + for_counter + "\n" + interpretToken(a.getEnfants()[1]);
 				code += "jumpf fin_for" + for_counter + "\n";
 				code += interpretToken(a.getEnfants()[2]);
-				code += interpretBlock(a.getEnfants()[3]);
+				niveau_bloc++;
+				code += interpretBlock(a.getEnfants()[3], niveau_bloc);
+				code += "jump for" + for_counter + "\n";
 				code += ".fin_for" + for_counter + "\n";
 				break;
 			case ("="):
-				if (a.getEnfants()[1].getToken().getClassname().equals("identifier")) {
-					code += "get " + a.getEnfants()[0].getToken().getName() + "\n";
-				}
-			
-				else {
-					code += interpretToken(a.getEnfants()[1]);					
-				}
+				code += interpretToken(a.getEnfants()[1]);
 				code += "set " + a.getEnfants()[0].getToken().getName() + "\n";				
 				break;
 		}

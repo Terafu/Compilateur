@@ -7,6 +7,7 @@ public class AnalyseurSyntaxique {
 
 	private String[] primaire = {"identifier", "cst_int", "(expression)"};
 	private TableSymboles symboles;
+	private GenerationCode generation;
 	
 	private Token[] tokens;
 	
@@ -16,6 +17,7 @@ public class AnalyseurSyntaxique {
 		
 		tokens = _tokens;
 		symboles = new TableSymboles();
+		generation = new GenerationCode();
 	}
 	
 	public Arbre next_X () {
@@ -30,6 +32,7 @@ public class AnalyseurSyntaxique {
 			test = next_instruction();
 		}
 		
+		generation.genererCode(retour, symboles);
 		return retour;
 		
 	}
@@ -39,7 +42,10 @@ public class AnalyseurSyntaxique {
 		
 		if (look() == null) {
 			return null;
-		}
+		}		
+
+		int position_var1;
+		int position_var2;
 		
 		switch (look().getClassname()) { //look peut être null 
 		
@@ -84,7 +90,7 @@ public class AnalyseurSyntaxique {
 				retour1.setToken(next());
 				if (look().getClassname().equals("(")) {
 					next();
-					retour1.addEnfants(next_declaration());
+					retour1.addEnfants(next_instruction());
 					if(look().getClassname().equals(";")) {
 						next();
 						retour1.addEnfants(next_expression());
@@ -147,37 +153,7 @@ public class AnalyseurSyntaxique {
 			case ("}"):
 				next();
 				return null;
-			
-			default:
-				retour1 = next_expression();
-				if (retour1 == null) {
-					System.err.println("Error : syntax problem");
-					pos++;
-					return null;
-				}
 				
-				else {
-					// Affectation
-					if (pos < tokens.length && look().getClassname().equals("=")) {
-						Token op = next();
-						Arbre retour2 = next_expression();
-						Arbre [] at = {retour1, retour2};
-						return new Arbre(op, at);
-					}
-				}
-				
-				return retour1;
-		}
-	}
-	
-	public Arbre next_declaration() {		
-
-		Arbre a1 = null;
-		int position_var1;
-		int position_var2;
-		
-		switch (look().getClassname()) {
-		
 			case "int": 
 				next();
 				if(look().getClassname().equals("identifier")){
@@ -192,7 +168,7 @@ public class AnalyseurSyntaxique {
 						next();
 						if (look().getClassname().equals("=")) {
 
-							a1 = new Arbre(look(), null);
+							retour1 = new Arbre(look(), null);
 						}
 						
 						else {
@@ -200,7 +176,7 @@ public class AnalyseurSyntaxique {
 							System.err.println("Declaration without affectation");
 						}
 						
-						a1.addEnfants(a2);
+						retour1.addEnfants(a2);
 						
 						// Valeur
 						next();
@@ -211,15 +187,17 @@ public class AnalyseurSyntaxique {
 							a3.addEnfants(new Arbre(new Token("int"), null));
 							a3.addEnfants(new Arbre(new Token(look().getName()), null));
 							
-							a1.addEnfants(a3);
+							retour1.addEnfants(a3);
 						}
 						
 						else {
 							
-							a1.addEnfants(new Arbre (look(), null));							
+							retour1.addEnfants(new Arbre (look(), null));							
 						}
+						next();
 					}
 				}
+				return retour1;
 				
 			case "var":
 				next();
@@ -234,7 +212,7 @@ public class AnalyseurSyntaxique {
 						// = 
 						if (next().getClassname().equals("=")) {
 
-							a1 = new Arbre(next(), null);
+							retour1 = new Arbre(next(), null);
 						}
 						
 						else {
@@ -242,7 +220,7 @@ public class AnalyseurSyntaxique {
 							System.err.println("Declaration without affectation");
 						}
 						
-						a1.addEnfants(a2);
+						retour1.addEnfants(a2);
 						
 						// Valeur
 						if (next().getClassname().equals("identifier")) {
@@ -252,17 +230,25 @@ public class AnalyseurSyntaxique {
 							a3.addEnfants(new Arbre(new Token("int"), null));
 							a3.addEnfants(new Arbre(new Token(look().getName()), null));
 							
-							a1.addEnfants(a3);
+							retour1.addEnfants(a3);
 						}
 						
 						else {
-							a1.addEnfants(new Arbre (next(), null));							
+							retour1.addEnfants(new Arbre (next(), null));							
 						}
+						next();
 					}
-				}				
+				}
+				return retour1;
+				
+			case "identifier":
+				retour1 = next_affectation();
+				return retour1;
+			
+			default:
+				System.err.println("Error : syntax problem");
+					return null;
 		}
-		
-		return a1;
 	}
 	
 	public Arbre next_affectation(){
@@ -283,7 +269,7 @@ public class AnalyseurSyntaxique {
 				next();
 				if (look().getClassname().equals("=")) {
 
-					a1 = new Arbre(next(), null);
+					a1 = new Arbre(look(), null);
 				}
 				
 				else {
@@ -292,22 +278,8 @@ public class AnalyseurSyntaxique {
 				}
 				
 				a1.addEnfants(a2);
-				
-				// Valeur
 				next();
-				if (look().getClassname().equals("identifier")) {
-					
-					position_var2 = symboles.searchSymbole(look());
-					Arbre a3 = new Arbre(new Token("identifier", "" + position_var2), null);
-					a3.addEnfants(new Arbre(new Token("int"), null));
-					a3.addEnfants(new Arbre(new Token(look().getName()), null));
-					
-					a1.addEnfants(a3);
-				}
-				
-				else {
-					a1.addEnfants(new Arbre (look(), null));							
-				}
+				a1.addEnfants(next_expression());
 			}
 		}
 		return a1;
@@ -320,7 +292,7 @@ public class AnalyseurSyntaxique {
 		
 		retour = next_logique();
 		if (retour == null) {
-			System.out.println("Error : syntax problem");
+			System.out.println("Error : syntax problem3");
 			pos++;
 			return null;
 		}
@@ -453,8 +425,15 @@ public class AnalyseurSyntaxique {
 			return null;
 		}
 		
+		// identifier
 		if (look().getClassname().equals("identifier")) {
-			return new Arbre(next(), null);
+			
+			int position_var = symboles.searchSymbole(look());
+			Arbre arbre = new Arbre(new Token("identifier", "" + position_var), null);
+			arbre.addEnfants(new Arbre(new Token("int"), null));
+			arbre.addEnfants(new Arbre(new Token(look().getName()), null));
+			next();
+			return arbre;
 		}
 		
 		// Moins unaire
