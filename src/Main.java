@@ -38,6 +38,8 @@ public class Main {
 			e.printStackTrace();
 		}
 		
+		test = test.replace("\n", "");
+		
 	
 		AnalyseurLexical anal = new AnalyseurLexical();
 		TableSymboles table = new TableSymboles ();
