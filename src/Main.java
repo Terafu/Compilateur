@@ -8,7 +8,7 @@ public class Main {
 		AnalyseurLexical anal = new AnalyseurLexical();
 		TableSymboles table = new TableSymboles ();
 		
-		String test = "int toto = 3";
+		String test = "for(int toto=1;2<3;toto = 2){2+2}";
 		ArrayList<Token> tok = new ArrayList<Token>();
 		
 		Token a = anal.nextToken(test);

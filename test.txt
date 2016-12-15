@@ -1,1 +1,14 @@
 .start
+push.i 1
+set 1
+.for0
+push.i 2
+push.i 3
+cmplt.i
+jumpf fin_for0
+set 0
+push.i 2
+push.i 2
+add.i
+.fin_for0
+halt

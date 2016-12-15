@@ -5,15 +5,17 @@ import javax.swing.JTree;
 
 public class AnalyseurSyntaxique {
 
-	String[] primaire = {"identifier", "cst_int", "(expression)"};
+	private String[] primaire = {"identifier", "cst_int", "(expression)"};
+	private TableSymboles symboles;
 	
-	Token[] tokens;
+	private Token[] tokens;
 	
-	int pos = 0; //current pos in the tokens table
+	private int pos = 0; //current pos in the tokens table
 	
 	public AnalyseurSyntaxique (Token[] _tokens) {
 		
 		tokens = _tokens;
+		symboles = new TableSymboles();
 	}
 	
 	public Arbre next_X () {
@@ -82,7 +84,7 @@ public class AnalyseurSyntaxique {
 				retour1.setToken(next());
 				if (look().getClassname().equals("(")) {
 					next();
-					retour1.addEnfants(next_affectation());
+					retour1.addEnfants(next_declaration());
 					if(look().getClassname().equals(";")) {
 						next();
 						retour1.addEnfants(next_expression());
@@ -100,11 +102,11 @@ public class AnalyseurSyntaxique {
 						}
 						
 						else
-							System.err.println("Error : syntax problem, ';' missing (for)");
+							System.err.println("Error : syntax problem, ';' missing (for 1)");
 					}
 					
 					else
-						System.err.println("Error : syntax problem, ';' missing (for)");
+						System.err.println("Error : syntax problem, ';' missing (for 2)");
 				}
 				
 				else
@@ -130,6 +132,7 @@ public class AnalyseurSyntaxique {
 				return retour1;
 				
 			case ("{"):
+				symboles.push();
 				retour1.setToken(next());
 
 				Arbre nextInstruct = next_instruction();
@@ -170,34 +173,93 @@ public class AnalyseurSyntaxique {
 	public Arbre next_declaration() {		
 
 		Arbre a1 = null;
+		int position_var1;
+		int position_var2;
 		
 		switch (look().getClassname()) {
 		
-			case "int":
+			case "int": 
+				next();
+				if(look().getClassname().equals("identifier")){
+					position_var1 = symboles.defineNewSymbole(look());
+					if (position_var1 != -1) {					
+						
+						Arbre a2 = new Arbre(new Token("identifier", "" + position_var1), null);
+						a2.addEnfants(new Arbre(new Token("int"), null));
+						a2.addEnfants(new Arbre(new Token(look().getName()), null));
+						
+						// =
+						next();
+						if (look().getClassname().equals("=")) {
+
+							a1 = new Arbre(look(), null);
+						}
+						
+						else {
+							
+							System.err.println("Declaration without affectation");
+						}
+						
+						a1.addEnfants(a2);
+						
+						// Valeur
+						next();
+						if (look().getClassname().equals("identifier")) {
+							
+							position_var2 = symboles.searchSymbole(look());
+							Arbre a3 = new Arbre(new Token("identifier", "" + position_var2), null);
+							a3.addEnfants(new Arbre(new Token("int"), null));
+							a3.addEnfants(new Arbre(new Token(look().getName()), null));
+							
+							a1.addEnfants(a3);
+						}
+						
+						else {
+							
+							a1.addEnfants(new Arbre (look(), null));							
+						}
+					}
+				}
 				
 			case "var":
-		}
-		
-		if(look().getClassname().equals("identifier")){
-			
-			Arbre id = new Arbre(next(),null);
-			
-			if(look().getClassname().equals("=")){
-				
-				Token op = next();
-				Arbre a2 = next_addition();
-				if (a2 == null ) {
-					System.err.println("Expression missing for affectation");
-					return null;
-				}
-				else {
-					Arbre [] at = {id, a2};
-					
-					return new Arbre(op, at);
-				}
-			}
-			else
-				System.err.println("Problem '=' missing for affectation");
+				next();
+				if(look().getClassname().equals("identifier")){
+					position_var1 = symboles.defineNewSymbole(look());
+					if (position_var1 != -1) {					
+						
+						Arbre a2 = new Arbre(new Token("identifier", "" + position_var1), null);
+						a2.addEnfants(new Arbre(new Token("var"), null));
+						a2.addEnfants(new Arbre(new Token(look().getName()), null));
+						
+						// = 
+						if (next().getClassname().equals("=")) {
+
+							a1 = new Arbre(next(), null);
+						}
+						
+						else {
+							
+							System.err.println("Declaration without affectation");
+						}
+						
+						a1.addEnfants(a2);
+						
+						// Valeur
+						if (next().getClassname().equals("identifier")) {
+							
+							position_var2 = symboles.searchSymbole(look());
+							Arbre a3 = new Arbre(new Token("identifier", "" + position_var2), null);
+							a3.addEnfants(new Arbre(new Token("int"), null));
+							a3.addEnfants(new Arbre(new Token(look().getName()), null));
+							
+							a1.addEnfants(a3);
+						}
+						
+						else {
+							a1.addEnfants(new Arbre (next(), null));							
+						}
+					}
+				}				
 		}
 		
 		return a1;
@@ -206,29 +268,48 @@ public class AnalyseurSyntaxique {
 	public Arbre next_affectation(){
 		
 		Arbre a1 = null;
+		int position_var1;
+		int position_var2;
 		
 		if(look().getClassname().equals("identifier")){
-			
-			Arbre id = new Arbre(next(),null);
-			
-			if(look().getClassname().equals("=")){
+			position_var1 = symboles.searchSymbole(look());
+			if (position_var1 != -1) {					
 				
-				Token op = next();
-				Arbre a2 = next_addition();
-				if (a2 == null ) {
-					System.err.println("Expression missing for affectation");
-					return null;
+				Arbre a2 = new Arbre(new Token("identifier", "" + position_var1), null);
+				a2.addEnfants(new Arbre(new Token("int"), null));
+				a2.addEnfants(new Arbre(new Token(look().getName()), null));
+				
+				// = 
+				next();
+				if (look().getClassname().equals("=")) {
+
+					a1 = new Arbre(next(), null);
 				}
+				
 				else {
-					Arbre [] at = {id, a2};
 					
-					return new Arbre(op, at);
+					System.err.println("Declaration without affectation");
+				}
+				
+				a1.addEnfants(a2);
+				
+				// Valeur
+				next();
+				if (look().getClassname().equals("identifier")) {
+					
+					position_var2 = symboles.searchSymbole(look());
+					Arbre a3 = new Arbre(new Token("identifier", "" + position_var2), null);
+					a3.addEnfants(new Arbre(new Token("int"), null));
+					a3.addEnfants(new Arbre(new Token(look().getName()), null));
+					
+					a1.addEnfants(a3);
+				}
+				
+				else {
+					a1.addEnfants(new Arbre (look(), null));							
 				}
 			}
-			else
-				System.err.println("Problem '=' missing for affectation");
 		}
-		
 		return a1;
 	}
 	

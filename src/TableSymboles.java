@@ -19,7 +19,7 @@ public class TableSymboles {
 		symboleStack.pop();
 	}
 	
-	public void defineNewSymbole (Token _identifier, Token _value) {
+	public int defineNewSymbole (Token _identifier) {
 		
 		if (_identifier.getClassname().equals("identifier")) {
 			
@@ -30,36 +30,35 @@ public class TableSymboles {
 			
 			else {
 				
-				System.out.println("Ajout d'un nouvel identifiant : " + _identifier.getName() + " ayant pour valeur : " + _value.getName());
-				symboleStack.peek().put(_identifier.getName(), _value.getName());
+				System.out.println("Ajout d'un nouvel identifiant : " + _identifier.getName() + " a la position : " + nb_var);
+				symboleStack.peek().put(_identifier.getName(), "" + nb_var);
+				nb_var++;				
+				return nb_var;
 			}
 		}
 		
 		else {
 			System.err.println("Error : try to define a symbole who is not an identifier...");
-		}		
+		}
+		
+		return -1;
 	}
 
-	public void searchSymbole (Token _identifier, Token _value) {
+	public int searchSymbole (Token _identifier) {
 		
 		int i = symboleStack.size()-1;
 		
 		while (i >= 0) {
 			
-			if (symboleStack.get(i).containsKey(_identifier.getName())) {
-				
-				System.out.println("Remplacement de la valeur de l'identifiant : " + _identifier.getName() + " par : " + _value.getName() + " (ancienne valeur : " + symboleStack.get(i).get(_identifier.getName()));
-				
-				symboleStack.get(i).replace(_identifier.getName(), _value.getName());
-				return;
-			}
+			String x = symboleStack.get(i).get(_identifier.getName());
 			
-			else {
-				i--;
+			if (x != null) {
+				return Integer.parseInt(x);
 			}
 		}
 		
 		System.err.println("Error : the variable " + _identifier.getName() + " is not declared...");
+		return -1;
 	}
 	
 	public String toString () {

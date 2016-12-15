@@ -130,6 +130,17 @@ public class GenerationCode {
 				code += interpretToken(a.getEnfants()[2]);
 				code += interpretBlock(a.getEnfants()[3]);
 				code += ".fin_for" + for_counter + "\n";
+				break;
+			case ("="):
+				if (a.getEnfants()[1].getToken().getClassname().equals("identifier")) {
+					code += "get " + a.getEnfants()[0].getToken().getName() + "\n";
+				}
+			
+				else {
+					code += interpretToken(a.getEnfants()[1]);					
+				}
+				code += "set " + a.getEnfants()[0].getToken().getName() + "\n";				
+				break;
 		}
 		return code;
 	}
