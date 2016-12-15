@@ -1,14 +1,48 @@
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class Main {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+		FileInputStream ips = null;
+		
+//		String test = "for(int i=1; i < 5; i = i + 1){i = i + 1}";
+		
+		String test = "";
+		
 
+		try {
+			ips = new FileInputStream(new File("program.txt"));
+			
+			InputStreamReader ipsr=new InputStreamReader(ips);
+			
+			BufferedReader br=new BufferedReader(ipsr);
+			
+			String ligne;
+			while ((ligne=br.readLine())!=null){
+				System.out.println(ligne);
+				test+=ligne+"\n";
+			}
+			br.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	
 		AnalyseurLexical anal = new AnalyseurLexical();
 		TableSymboles table = new TableSymboles ();
 		
-		String test = "for(int i=1; i < 5; i = i + 1){i = i + 1}";
+		
 		ArrayList<Token> tok = new ArrayList<Token>();
 		
 		Token a = anal.nextToken(test);
