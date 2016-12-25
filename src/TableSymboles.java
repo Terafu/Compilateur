@@ -15,8 +15,18 @@ public class TableSymboles {
 		symboleStack.push(new Hashtable<String, String>());
 	}
 	
-	public void pop(){
-		symboleStack.pop();
+	public Hashtable<String, String> pop(){
+		return symboleStack.pop();
+	}
+	
+	public int getNbVar() {
+		
+		return nb_var;
+	}
+
+	public void setNbVar(int i) {
+		
+		nb_var = i;
 	}
 	
 	public int defineNewSymbole (Token _identifier) {

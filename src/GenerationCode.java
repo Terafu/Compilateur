@@ -1,26 +1,37 @@
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Stack;
 
 public class GenerationCode {
 
 	private int label_counter = 0;
-	private TableSymboles symboles;
+	private Stack<Hashtable<String, String>> symboles;
 	int niveau_bloc = 0;
 	
 	public GenerationCode(){
 	}
 	
-	public void genererCode(Arbre a, TableSymboles _symboles){
+	public void genererCode(Arbre a, Stack<Hashtable<String, String>> _symboles){
 		
 		symboles = _symboles;
+		
+		niveau_bloc = symboles.size() - 1;
 		
 		try (PrintWriter out = new PrintWriter( "test.txt" )){
 			
 			out.println(".start");			
 
-			out.print(interpretBlock(a, niveau_bloc));
+			if (a.getEnfants()[0].getToken().getClassname().equals("{")) {
+
+				out.print(interpretToken(a.getEnfants()[0]));
+			}
+			
+			else {
+				
+				out.print(interpretBlock(a, niveau_bloc));
+			}
 			
 			out.println("halt");
 		}
@@ -29,24 +40,23 @@ public class GenerationCode {
 	         e.printStackTrace();
 
 	    }
-		
-		catch (IOException e) {
-
-	         e.printStackTrace();
-		}
 	}
 	
 	public String interpretBlock(Arbre a, int niveau) {		
 		
 		String code = "";
 		
-		for(int i = 0; i < symboles.getStack(niveau).size(); i ++) {
+		for(int i = 0; i < symboles.get(niveau).size(); i ++) {
 			code += "push.i 0\n";
 		}
 		
 		for (int i = 0; i < a.getEnfants().length; i ++) {	
 			
 			code += interpretToken(a.getEnfants()[i]);
+		}
+		
+		for(int i = 0; i < symboles.get(niveau).size(); i ++) {
+			code += "drop\n";
 		}
 		
 		return code;
@@ -58,6 +68,10 @@ public class GenerationCode {
 		
 		switch (a.getToken().getClassname()) {
 		
+			case ("{"):
+				code += interpretBlock(a, niveau_bloc);
+				break;
+				
 			case ("cst_int"):
 				code += "push.i " + a.getToken().getName() + "\n";
 				break;
@@ -113,11 +127,11 @@ public class GenerationCode {
 				int if_counter = label_counter++;
 				code += interpretToken(a.getEnfants()[0]);
 				code += "jumpf else" + if_counter + "\n";
-				niveau_bloc++;
+				niveau_bloc--;
 				code += interpretBlock(a.getEnfants()[1], niveau_bloc);
 				if (a.getEnfants().length > 2) {
 					code += "jump fin_else" + if_counter + "\n";
-					niveau_bloc++;
+					niveau_bloc--;
 					code += ".else" + if_counter + "\n" + interpretBlock(a.getEnfants()[2].getEnfants()[0], niveau_bloc);
 					code += ".fin_else" + if_counter + "\n";
 				}
@@ -131,7 +145,7 @@ public class GenerationCode {
 				int while_counter = label_counter++;
 				code += ".while" + while_counter + "\n" + interpretToken(a.getEnfants()[0]);
 				code += "jumpf fin_while" + while_counter + "\n";
-				niveau_bloc++;
+				niveau_bloc--;
 				code += interpretBlock(a.getEnfants()[1], niveau_bloc);
 				code += "jump while" + while_counter + "\n";
 				code += ".fin_while" + while_counter + " ";
@@ -142,7 +156,7 @@ public class GenerationCode {
 				code += ".for" + for_counter + "\n" + interpretToken(a.getEnfants()[1]);
 				code += "jumpf fin_for" + for_counter + "\n";
 				code += interpretToken(a.getEnfants()[2]);
-				niveau_bloc++;
+				niveau_bloc--;
 				code += interpretBlock(a.getEnfants()[3], niveau_bloc);
 				code += "jump for" + for_counter + "\n";
 				code += ".fin_for" + for_counter + "\n";

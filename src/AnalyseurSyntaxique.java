@@ -8,6 +8,7 @@ public class AnalyseurSyntaxique {
 	private String[] primaire = {"identifier", "cst_int", "(expression)"};
 	private TableSymboles symboles;
 	private GenerationCode generation;
+	private Stack<Hashtable<String, String>> symboleStack = new Stack<Hashtable<String, String>>();
 	
 	private Token[] tokens;
 	
@@ -32,7 +33,7 @@ public class AnalyseurSyntaxique {
 			test = next_instruction();
 		}
 		
-		generation.genererCode(retour, symboles);
+		generation.genererCode(retour, symboleStack);
 		return retour;
 		
 	}
@@ -152,6 +153,8 @@ public class AnalyseurSyntaxique {
 				
 			case ("}"):
 				next();
+				symboleStack.push(symboles.pop());
+				symboles.setNbVar(symboles.getNbVar() - (symboleStack.lastElement().size())); 
 				return null;
 				
 			case "int": 
@@ -245,9 +248,13 @@ public class AnalyseurSyntaxique {
 				retour1 = next_affectation();
 				return retour1;
 			
+			case ";":
+				next();
+				return next_instruction();
+				
 			default:
 				System.err.println("Error : syntax problem");
-					return null;
+				return null;
 		}
 	}
 	

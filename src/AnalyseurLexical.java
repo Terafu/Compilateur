@@ -34,7 +34,7 @@ public class AnalyseurLexical {
 	public Token nextToken(String test) {
 
 		if (test.length() > pos) {
-			while (test.charAt(pos) == ' ') {
+			while (test.charAt(pos) == ' ' || test.charAt(pos) == '\n' || test.charAt(pos) == '\t') {
 				pos++;
 			}
 			

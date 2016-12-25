@@ -27,7 +27,7 @@ public class Main {
 			String ligne;
 			while ((ligne=br.readLine())!=null){
 				System.out.println(ligne);
-				test+=ligne+"\n";
+				test+=ligne;
 			}
 			br.close();
 		} catch (FileNotFoundException e) {
@@ -37,8 +37,6 @@ public class Main {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		test = test.replace("\n", "");
 		
 	
 		AnalyseurLexical anal = new AnalyseurLexical();
