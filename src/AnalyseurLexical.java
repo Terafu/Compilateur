@@ -10,7 +10,7 @@ public class AnalyseurLexical {
 	private FileInputStream file;
 	private byte[] buf = new byte [8];
 	private int pos;
-	private String[] keyWords = {"if", "for", "while", "var", "int", "else"};
+	private String[] keyWords = {"if", "for", "while", "var", "int", "else", "out"};
 	private String[] operators = {"+", "-", "*", "/", "%", "(", ")", "==", "!=", "<", ">", "<=", ">=", "=", ";", "{", "}", "&&", "||"};
 	
 	public AnalyseurLexical() {

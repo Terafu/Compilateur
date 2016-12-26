@@ -3,26 +3,6 @@ push.i 0
 push.i 4
 set 0
 get 0
-push.i 0
-cmpeq.i
-jumpf else0
-push.i 0
-push.i 3
-set 1
-get 0
-push.i 1
-add.i
-set 0
-get 0
-push.i 0
-cmpeq.i
-jumpf else1
-get 0
-push.i 1
-add.i
-set 0
-.else1
-drop
-.else0
+out.i 
 drop
 halt

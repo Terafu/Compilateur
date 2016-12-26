@@ -165,6 +165,9 @@ public class GenerationCode {
 				code += interpretToken(a.getEnfants()[1]);
 				code += "set " + a.getEnfants()[0].getToken().getName() + "\n";				
 				break;
+			case ("out"):
+				code += interpretToken(a.getEnfants()[0]);
+				code += "out.i \n";
 		}
 		return code;
 	}

@@ -157,6 +157,15 @@ public class AnalyseurSyntaxique {
 				symboles.setNbVar(symboles.getNbVar() - (symboleStack.lastElement().size())); 
 				return null;
 				
+			case ("out"):
+				Arbre a = new Arbre (new Token("out"), null);
+				next(); 	
+				int position_var = symboles.searchSymbole(look());
+			
+				a.addEnfants(new Arbre(new Token("identifier", "" + position_var), null));
+				next();
+				return a;
+				
 			case "int": 
 				next();
 				if(look().getClassname().equals("identifier")){
