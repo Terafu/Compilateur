@@ -1,5 +1,13 @@
 {
-	int a = 4; 
+	function test (int b, int c) {
+		
+		b = b*c;
+		return b;
+	}
 	
-	out a;
+	int a;
+	a = 7;
+	int f = 3;
+	a = test(a, f);
+	
 }

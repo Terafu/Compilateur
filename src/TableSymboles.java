@@ -73,9 +73,14 @@ public class TableSymboles {
 		return -1;
 	}
 	
-	public Hashtable<String, String> getStack (int level) {
+	public Hashtable<String, String> getHastable (int level) {
 		
 		return symboleStack.get(level);
+	}
+	
+	public Stack<Hashtable<String, String>> getStack () {
+		
+		return symboleStack;
 	}
 	
 	public String toString () {

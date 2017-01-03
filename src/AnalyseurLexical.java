@@ -10,7 +10,7 @@ public class AnalyseurLexical {
 	private FileInputStream file;
 	private byte[] buf = new byte [8];
 	private int pos;
-	private String[] keyWords = {"if", "for", "while", "var", "int", "else", "out"};
+	private String[] keyWords = {"if", "for", "while", "var", "int", "else", "out", "return", "function"};
 	private String[] operators = {"+", "-", "*", "/", "%", "(", ")", "==", "!=", "<", ">", "<=", ">=", "=", ";", "{", "}", "&&", "||"};
 	
 	public AnalyseurLexical() {
@@ -34,7 +34,7 @@ public class AnalyseurLexical {
 	public Token nextToken(String test) {
 
 		if (test.length() > pos) {
-			while (test.charAt(pos) == ' ' || test.charAt(pos) == '\n' || test.charAt(pos) == '\t') {
+			while (test.charAt(pos) == ' ' || test.charAt(pos) == '\n' || test.charAt(pos) == '\t' || test.charAt(pos) == ',') {
 				pos++;
 			}
 			

@@ -9,6 +9,7 @@ public class GenerationCode {
 	private int label_counter = 0;
 	private Stack<Hashtable<String, String>> symboles;
 	int niveau_bloc = 0;
+	private String codef = "";
 	
 	public GenerationCode(){
 	}
@@ -16,8 +17,6 @@ public class GenerationCode {
 	public void genererCode(Arbre a, Stack<Hashtable<String, String>> _symboles){
 		
 		symboles = _symboles;
-		
-		niveau_bloc = symboles.size() - 1;
 		
 		try (PrintWriter out = new PrintWriter( "test.txt" )){
 			
@@ -30,10 +29,11 @@ public class GenerationCode {
 			
 			else {
 				
-				out.print(interpretBlock(a, niveau_bloc));
+				out.print(interpretBlock(a, niveau_bloc, true));
 			}
 			
 			out.println("halt");
+			out.println(codef);
 		}
 		
 		catch (FileNotFoundException e) {
@@ -42,9 +42,10 @@ public class GenerationCode {
 	    }
 	}
 	
-	public String interpretBlock(Arbre a, int niveau) {		
+	public String interpretBlock(Arbre a, int niveau, boolean doDrop) {		
 		
 		String code = "";
+		//boolean doDrop = true;
 		
 		for(int i = 0; i < symboles.get(niveau).size(); i ++) {
 			code += "push.i 0\n";
@@ -55,8 +56,11 @@ public class GenerationCode {
 			code += interpretToken(a.getEnfants()[i]);
 		}
 		
-		for(int i = 0; i < symboles.get(niveau).size(); i ++) {
-			code += "drop\n";
+		if (doDrop) {
+			
+			for(int i = 0; i < symboles.get(niveau).size(); i ++) {
+				code += "drop\n";
+			}
 		}
 		
 		return code;
@@ -68,8 +72,26 @@ public class GenerationCode {
 		
 		switch (a.getToken().getClassname()) {
 		
+			case ("function"):
+				codef += "." + a.getEnfants()[0].getToken().getName() + "\n";
+				codef += interpretBlock (a.getEnfants()[a.getEnfants().length - 1], niveau_bloc, false);
+				break;
+				
+			case ("call_function"):
+				code += "prep " + a.getToken().getName() + "\n";
+				for (int i = 0; i < a.getEnfants().length; i ++) {
+					code += interpretToken(a.getEnfants()[i]);
+				}
+				code += "call " + a.getEnfants().length + "\n";
+				break;
+				
+			case ("return"):
+				code += interpretToken(a.getEnfants()[0]);
+				code += "ret\n";
+				break;
+		
 			case ("{"):
-				code += interpretBlock(a, niveau_bloc);
+				code += interpretBlock(a, niveau_bloc, true);
 				break;
 				
 			case ("cst_int"):
@@ -127,12 +149,12 @@ public class GenerationCode {
 				int if_counter = label_counter++;
 				code += interpretToken(a.getEnfants()[0]);
 				code += "jumpf else" + if_counter + "\n";
-				niveau_bloc--;
-				code += interpretBlock(a.getEnfants()[1], niveau_bloc);
+				niveau_bloc++;
+				code += interpretBlock(a.getEnfants()[1], niveau_bloc, true);
 				if (a.getEnfants().length > 2) {
 					code += "jump fin_else" + if_counter + "\n";
-					niveau_bloc--;
-					code += ".else" + if_counter + "\n" + interpretBlock(a.getEnfants()[2].getEnfants()[0], niveau_bloc);
+					niveau_bloc++;
+					code += ".else" + if_counter + "\n" + interpretBlock(a.getEnfants()[2].getEnfants()[0], niveau_bloc, true);
 					code += ".fin_else" + if_counter + "\n";
 				}
 				
@@ -145,8 +167,8 @@ public class GenerationCode {
 				int while_counter = label_counter++;
 				code += ".while" + while_counter + "\n" + interpretToken(a.getEnfants()[0]);
 				code += "jumpf fin_while" + while_counter + "\n";
-				niveau_bloc--;
-				code += interpretBlock(a.getEnfants()[1], niveau_bloc);
+				niveau_bloc++;
+				code += interpretBlock(a.getEnfants()[1], niveau_bloc, true);
 				code += "jump while" + while_counter + "\n";
 				code += ".fin_while" + while_counter + " ";
 				break;
@@ -156,8 +178,8 @@ public class GenerationCode {
 				code += ".for" + for_counter + "\n" + interpretToken(a.getEnfants()[1]);
 				code += "jumpf fin_for" + for_counter + "\n";
 				code += interpretToken(a.getEnfants()[2]);
-				niveau_bloc--;
-				code += interpretBlock(a.getEnfants()[3], niveau_bloc);
+				niveau_bloc++;
+				code += interpretBlock(a.getEnfants()[3], niveau_bloc, true);
 				code += "jump for" + for_counter + "\n";
 				code += ".fin_for" + for_counter + "\n";
 				break;
@@ -167,7 +189,9 @@ public class GenerationCode {
 				break;
 			case ("out"):
 				code += interpretToken(a.getEnfants()[0]);
-				code += "out.i \n";
+				code += "out.i \n";				
+			default:
+				break;
 		}
 		return code;
 	}
