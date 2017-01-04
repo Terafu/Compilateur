@@ -1,5 +1,15 @@
-{
+{	
 	int a;
-	a = 2;
-	int b = 7;	
+	a = 5;
+	
+	int b = 7;
+	
+	if(a < b){
+		a =b;
+	}
+	else{
+		b = a;
+	}
+	
+	out a;
 }

@@ -208,7 +208,8 @@ public class AnalyseurSyntaxique {
 				retour1.addEnfants(new Arbre(new Token("identifier", "" + position_var), null));
 				next();
 				return retour1;
-				
+			
+				// cas d'une déclaration
 			case ("int"): 
 				next();
 				
