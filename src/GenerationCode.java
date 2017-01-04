@@ -203,9 +203,11 @@ public class GenerationCode {
 			case ("out"):
 				code += interpretToken(a.getEnfants()[0]);
 				code += "out.i \n";
+				break;
 			case ("!"):
 				code += interpretToken(a.getEnfants()[0]);
-				code += "not\n";	
+				code += "not\n";
+				break;
 			default:
 				break;
 		}
