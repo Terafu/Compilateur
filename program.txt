@@ -1,13 +1,5 @@
 {
-	function test (int b, int c) {
-		
-		b = b*c;
-		return b;
-	}
-	
 	int a;
-	a = 7;
-	int f = 3;
-	a = test(a, f);
-	
+	a = 2;
+	int b = 7;	
 }

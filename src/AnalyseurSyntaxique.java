@@ -21,6 +21,7 @@ public class AnalyseurSyntaxique {
 		generation = new GenerationCode();
 	}
 	
+	// Interprète les tokens
 	public Arbre next_X () {
 		
 		Arbre retour = new Arbre();
@@ -48,7 +49,7 @@ public class AnalyseurSyntaxique {
 		int position_var1;
 		int position_var2;
 		
-		switch (look().getClassname()) { //look peut etre null
+		switch (look().getClassname()) {
 		
 			case ("function"):
 				retour1.setToken(look());
@@ -210,20 +211,20 @@ public class AnalyseurSyntaxique {
 				
 			case ("int"): 
 				next();
+				
 				if(look().getClassname().equals("identifier")){
 					position_var1 = symboles.defineNewSymbole(look());
 					if (position_var1 != -1) {					
 						
 						Arbre a2 = new Arbre(new Token("identifier", "" + position_var1), null);
-						a2.addEnfants(new Arbre(new Token("int"), null));
 						a2.addEnfants(new Arbre(new Token(look().getName()), null));
+						a2.addEnfants(new Arbre(new Token("int"), null));
 						
 						// =
 						next();
 						if (look().getClassname().equals("=")) {
 
 							retour1 = new Arbre(look(), null);
-							// Valeur
 							next();
 							if (look().getClassname().equals("identifier")) {
 								
@@ -236,7 +237,7 @@ public class AnalyseurSyntaxique {
 							}
 							
 							else {
-								
+								retour1.addEnfants(a2);
 								retour1.addEnfants(new Arbre (look(), null));							
 							}
 							next();
@@ -247,7 +248,7 @@ public class AnalyseurSyntaxique {
 							retour1.setToken(new Token("int", null));
 						}
 						
-						retour1.addEnfants(a2);						
+						//retour1.addEnfants(a2);						
 					}
 				}
 				return retour1;

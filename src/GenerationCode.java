@@ -14,6 +14,7 @@ public class GenerationCode {
 	public GenerationCode(){
 	}
 	
+	// Génère le code de l'arbre
 	public void genererCode(Arbre a, Stack<Hashtable<String, String>> _symboles){
 		
 		symboles = _symboles;
@@ -42,6 +43,7 @@ public class GenerationCode {
 	    }
 	}
 	
+	// Interpète un bloc (déclaration des variables + interprétation des tokens du bloc + drop à la fin du bloc des variables)
 	public String interpretBlock(Arbre a, int niveau, boolean doDrop) {		
 		
 		String code = "";
@@ -66,6 +68,7 @@ public class GenerationCode {
 		return code;
 	}
 	
+	// Interpète un token afin de générer le code associé
 	public String interpretToken(Arbre a) {
 		
 		String code = "";
