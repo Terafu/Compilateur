@@ -18,7 +18,7 @@ public class GenerationCode {
 		
 		symboles = _symboles;
 		
-		try (PrintWriter out = new PrintWriter( "test.txt" )){
+		try (PrintWriter out = new PrintWriter( "out.txt" )){
 			
 			out.println(".start");			
 
@@ -145,6 +145,16 @@ public class GenerationCode {
 				code += interpretToken(a.getEnfants()[1]);
 				code += "cmple.i\n";
 				break;
+			case ("&&"):
+				code += interpretToken(a.getEnfants()[0]);
+				code += interpretToken(a.getEnfants()[1]);
+				code += "and\n";
+				break;
+			case ("||"):
+				code += interpretToken(a.getEnfants()[0]);
+				code += interpretToken(a.getEnfants()[1]);
+				code += "or\n";
+				break;
 			case ("if"):
 				int if_counter = label_counter++;
 				code += interpretToken(a.getEnfants()[0]);
@@ -189,7 +199,10 @@ public class GenerationCode {
 				break;
 			case ("out"):
 				code += interpretToken(a.getEnfants()[0]);
-				code += "out.i \n";				
+				code += "out.i \n";
+			case ("!"):
+				code += interpretToken(a.getEnfants()[0]);
+				code += "not\n";	
 			default:
 				break;
 		}

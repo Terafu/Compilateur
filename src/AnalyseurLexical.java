@@ -11,7 +11,7 @@ public class AnalyseurLexical {
 	private byte[] buf = new byte [8];
 	private int pos;
 	private String[] keyWords = {"if", "for", "while", "var", "int", "else", "out", "return", "function"};
-	private String[] operators = {"+", "-", "*", "/", "%", "(", ")", "==", "!=", "<", ">", "<=", ">=", "=", ";", "{", "}", "&&", "||"};
+	private String[] operators = {"!", "+", "-", "*", "/", "%", "(", ")", "==", "!=", "<", ">", "<=", ">=", "=", ";", "{", "}", "&&", "||"};
 	
 	public AnalyseurLexical() {
 		

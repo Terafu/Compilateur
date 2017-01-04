@@ -529,12 +529,15 @@ public class AnalyseurSyntaxique {
 			}
 		}
 		
+		else if (look().getClassname().equals("!")) {
+			Arbre res = new Arbre (new Token("!", null), null);
+			res.addEnfants(next_expression());
+			
+			return res;
+		}
+		
 		return null;
 	}
-	//endregion
-	
-	//Region grammaire des structures
-	
 	//endregion
 
 	public boolean accept (String type) {
@@ -563,78 +566,3 @@ public class AnalyseurSyntaxique {
 		return tokens[pos++];
 	}
 }
-
-
-//
-//public boolean next_addition () {
-//	
-//	int save = pos;
-//	
-//	if (next_multiplication() && accept("+") && next_addition()) {
-//		return true;
-//	}
-//	
-//	else {
-//		pos = save;
-//	}
-//	
-//	if (next_multiplication() && accept("-") && next_addition()) {
-//		return true;
-//	}
-//	
-//	else {
-//		pos = save;
-//	}
-//	
-//	if (next_multiplication()) {
-//		return true;
-//	}
-//	
-//	else {
-//		pos = save;
-//	}
-//	
-//	return false;
-//}
-//
-//public boolean next_multiplication () {
-//	
-//	int save = pos;
-//	
-//	if (next_primaire() && accept("*") && next_multiplication()) {
-//		return true;
-//	}
-//	
-//	else {
-//		pos = save;
-//	}
-//	
-//	if (next_primaire() && accept("/") && next_multiplication()) {
-//		return true;
-//	}
-//	
-//	else {
-//		pos = save;
-//	}
-//	
-//	if (next_primaire()) {
-//		return true;
-//	}
-//	
-//	else {
-//		pos = save;
-//	}
-//	
-//	return false;
-//}
-//
-//public boolean next_primaire() {
-//	
-//	for (int i = 0; i < primaire.length; i++) {
-//		if (accept(primaire[i])) {
-//			return true;
-//		}
-//	}
-//	
-//	return false;		
-//}
