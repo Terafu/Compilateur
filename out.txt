@@ -1,23 +1,51 @@
 .start
 push.i 0
 push.i 0
+push.i 0
 push.i 5
 set 0
 push.i 7
 set 1
+.while0
 get 0
 get 1
 cmplt.i
-jumpf else0
-get 1
+jumpf fin_while0
+get 0
+push.i 1
+add.i
 set 0
-jump fin_else0
-.else0
+jump while0
+.fin_while0
 get 0
+push.i 5
+cmpgt.i
+jumpf else1
+push.i 0
+get 0
+set 2
+get 2
 set 1
-.fin_else0
+drop
+.else1
+push.i 0
+set 2
+.for2
+get 2
+get 1
+cmplt.i
+jumpf fin_for2
+get 2
+push.i 1
+add.i
+set 2
 get 0
-out.i 
+get 1
+add.i
+set 0
+jump for2
+.fin_for2
+drop
 drop
 drop
 halt

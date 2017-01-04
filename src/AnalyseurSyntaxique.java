@@ -234,6 +234,7 @@ public class AnalyseurSyntaxique {
 								a3.addEnfants(new Arbre(new Token("int"), null));
 								a3.addEnfants(new Arbre(new Token(look().getName()), null));
 								
+								retour1.addEnfants(a2);
 								retour1.addEnfants(a3);
 							}
 							

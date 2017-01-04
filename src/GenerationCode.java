@@ -183,7 +183,7 @@ public class GenerationCode {
 				niveau_bloc++;
 				code += interpretBlock(a.getEnfants()[1], niveau_bloc, true);
 				code += "jump while" + while_counter + "\n";
-				code += ".fin_while" + while_counter + " ";
+				code += ".fin_while" + while_counter + "\n";
 				break;
 			case ("for"):
 				int for_counter = label_counter++;
