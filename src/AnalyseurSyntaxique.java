@@ -188,16 +188,18 @@ public class AnalyseurSyntaxique {
 			case ("}"):
 				next();
 				int pos = symboles.getStack().size();
+				int posNewStack = 0;
 				for (int i = pos - 2; i < symboleStack.size(); i ++) {
 					
 					if (symboleStack.elementAt(i)== null) {						
 
 						symboleStack.remove(i);
 						symboleStack.add(i, symboles.pop());
+						posNewStack = i;
 						break;
 					}
 				}
-				symboles.setNbVar(symboles.getNbVar() - (symboleStack.lastElement().size())); 
+				symboles.setNbVar(symboles.getNbVar() - (symboleStack.get(posNewStack).size())); 
 				return null;
 				
 			case ("out"):
