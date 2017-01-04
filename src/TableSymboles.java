@@ -29,6 +29,7 @@ public class TableSymboles {
 		nb_var = i;
 	}
 	
+	// Ajoute une variables à la table des symboles
 	public int defineNewSymbole (Token _identifier) {
 		
 		if (_identifier.getClassname().equals("identifier")) {
@@ -54,6 +55,7 @@ public class TableSymboles {
 		return -1;
 	}
 
+	// Recherche une variable dans la table des symboles
 	public int searchSymbole (Token _identifier) {
 		
 		int i = symboleStack.size()-1;

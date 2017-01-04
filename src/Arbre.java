@@ -5,16 +5,43 @@ public class Arbre {
 	private Arbre[] enfants;
 	private Token tok;
 	
+	// Constructeurs
+	public Arbre(Token _tok, Arbre[] _enfants ) {
+		
+		tok = _tok;
+		enfants = _enfants;
+	}
+	
+	public Arbre() {
+		
+		tok = null;
+		enfants = null;
+	}
+	
+	// Accesseurs
+	
 	public Arbre[] getEnfants() {
 		
 		return enfants;
 	}
 	
+	public Token getToken() {
+		
+		return tok;
+	}
+	
+	public void setToken(Token _tok) {
+		
+		tok = _tok;
+	}
+	
+	// Ajoute une tableau d'arbres en tant qu'enfants
 	public void setEnfants(Arbre[] _enfants) {
 		
 		enfants = _enfants;
 	}
 	
+	// Ajoute une enfant à l'arbre
 	public void addEnfants(Arbre _enfant) {
 		
 		Arbre[] newEnfants;
@@ -39,28 +66,7 @@ public class Arbre {
 		this.setEnfants(newEnfants);
 	}
 	
-	public Token getToken() {
-		
-		return tok;
-	}
-	
-	public void setToken(Token _tok) {
-		
-		tok = _tok;
-	}
-	
-	public Arbre(Token _tok, Arbre[] _enfants ) {
-		
-		tok = _tok;
-		enfants = _enfants;
-	}
-	
-	public Arbre() {
-		
-		tok = null;
-		enfants = null;
-	}
-	
+	// Permet un affichage de l'arbre
 	public String toString() {
 		
 		String retour = "";
@@ -84,37 +90,4 @@ public class Arbre {
 		return tok.getClassname() + retour;
 		
 	}
-	
-	public ArrayList<Token> orderToken() {
-		
-		ArrayList<Token> toks = new ArrayList<Token>();
-		
-		if(enfants == null){
-			
-			toks.add(tok);
-			return toks;
-		}
-	
-		toks.add(tok);
-		
-		for (int i = 0; i < enfants.length; i++){
-			toks.addAll(enfants[i].orderToken());
-		}
-		
-		return toks;
-	}
-	
-//	public Arbre getChild(Token _enfant){
-//		
-//		if(enfant.isEmpty()){
-//			return null;
-//		}
-//		
-//		for(int i = 0; i < enfant.size(); i++){
-//			if (enfant.get(i).tok.getClassname().equals(_enfant.getClassname()))
-//				return enfant.get(i);
-//		}
-//		
-//		return getChild(_enfant);
-//	}
 }

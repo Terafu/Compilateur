@@ -17,6 +17,7 @@ public class AnalyseurLexical {
 		
 	}
 	
+	// Constructeur
 	public AnalyseurLexical (String _path) {
 		
 		path = _path;
@@ -24,13 +25,13 @@ public class AnalyseurLexical {
 		try {
 			file = new FileInputStream(new File(path));
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		pos = 0;
 	}
 	
+	// Interprète le token suivant
 	public Token nextToken(String test) {
 
 		if (test.length() > pos) {
@@ -91,6 +92,7 @@ public class AnalyseurLexical {
 		return null;		
 	}
 	
+	// Regarde le token suivant
 	public Token lookNextToken(String test) {
 		
 		int position = pos;
@@ -160,7 +162,7 @@ public class AnalyseurLexical {
 		
 	}
 	
-private Boolean isNumeric(String _toTest) {
+	private Boolean isNumeric(String _toTest) {
 		
 		Pattern p = Pattern.compile("[0-9]");
 		Matcher m = p.matcher(_toTest);
